@@ -67,10 +67,11 @@
 
     function calculateResult() {
         try {
-            if (!isValidExpression(display.value)) {
+            const expression = display.value.replace(/\*\*/g, '^');
+            if (!isValidExpression(expression)) {
                 display.value = 'Syntax Error';
             } else {
-                display.value = eval(display.value);
+                display.value = evalExpression(expression);
             }
             resetDisplay = true;
         } catch (error) {
@@ -80,8 +81,12 @@
     }
 
     function isValidExpression(expression) {
-        const validPattern = /^(\d+\.?\d*|\.\d+)([\+\-\*\/]\d+\.?\d*|\.\d+)*$/;
+        const validPattern = /^(\d+\.?\d*|\.\d+)([\+\-\*\/%\^]\d+\.?\d*|\.\d+)*$/;
         return validPattern.test(expression);
+    }
+
+    function evalExpression(expression) {
+        return new Function('return ' + expression.replace(/\^/g, '**'))();
     }
 </script>
 </body>
